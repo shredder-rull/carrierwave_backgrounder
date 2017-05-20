@@ -81,12 +81,16 @@ module CarrierWave
             end
 
             def write_#{column}_identifier
-              super and return if process_#{column}_upload
+              if process_#{column}_upload || !Backgrounder.enabled
+                return super
+              end
               self.#{column}_tmp = #{column}_cache if #{column}_cache
             end
 
             def store_#{column}!
-              super if process_#{column}_upload
+              if process_#{column}_upload || !Backgrounder.enabled
+                return super
+              end
             end
 
           RUBY

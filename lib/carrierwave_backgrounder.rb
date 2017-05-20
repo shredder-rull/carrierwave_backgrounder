@@ -7,6 +7,9 @@ module CarrierWave
   module Backgrounder
     include Support::Backends
 
+    mattr_accessor :enabled
+    self.enabled = true
+
     def self.configure
       yield self
       case @backend
@@ -29,6 +32,14 @@ module CarrierWave
       end
     end
 
+    #Warning: Not thread safe. For tests only!
+    def self.with_perform(value = true)
+      old = enabled
+      self.enabled = value
+      yield
+    ensure
+      self.enabled = old
+    end
   end
 end
 
